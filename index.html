@@ -1,342 +1,343 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Perceptron Training Process</title>
-    <!-- Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-    />
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        padding: 20px;
-        background-color: #343a40; /* Warna latar belakang tema dark */
-        color: #fff; /* Warna teks */
-      }
-      .form-container {
-        max-width: 600px;
-        margin-bottom: 20px;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        background-color: #f9f9f9; /* Warna latar belakang form */
-        color: #333; /* Warna teks di form */
-        position: sticky;
-        top: 20px; /* Jarak dari atas */
-        z-index: 1000; /* Z-index untuk menempatkan di atas tabel */
-        margin-left: 15px; /* Spasi dari kiri */
-      }
-      .form-container label {
-        font-weight: bold;
-      }
-      .form-container input[type='number'],
-      .form-container input[type='text'] {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        box-sizing: border-box;
-      }
-      .form-container button {
-        width: 100%;
-        background-color: #28a745; /* Warna tombol hijau */
-        color: #fff; /* Warna teks di tombol */
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-      .form-container button:hover {
-        background-color: #218838; /* Warna tombol hijau saat dihover */
-      }
-      .table-responsive {
-        margin-top: 30px;
-      }
-      /* Gaya tambahan untuk tampilan penuh lebar */
-      .full-width-content {
-        padding: 20px;
-      }
-      .full-width-background {
-        background-color: #454d55; /* Warna latar belakang tema dark lebih gelap */
-        padding: 20px;
-        margin-bottom: 20px;
-        border-radius: 5px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="row">
-      <!-- Spasi kosong kiri -->
-      <div class="col-md-3">
-        <div class="form-container">
-          <form id="perceptronForm">
-            <div class="form-group">
-              <label for="initialW1">Masukkan nilai awal W1:</label>
-              <input
-                type="number"
-                id="initialW1"
-                class="form-control"
-                step="any"
-                placeholder="Contoh: 0.0"
-                required
-              />
-            </div>
-            <div class="form-group">
-              <label for="initialW2">Masukkan nilai awal W2:</label>
-              <input
-                type="number"
-                id="initialW2"
-                class="form-control"
-                step="any"
-                placeholder="Contoh: 0.0"
-                required
-              />
-            </div>
-            <div class="form-group">
-              <label for="initialWb">Masukkan nilai awal Wb:</label>
-              <input
-                type="number"
-                id="initialWb"
-                class="form-control"
-                step="any"
-                placeholder="Contoh: 0.0"
-                required
-              />
-            </div>
-            <div class="form-group">
-              <label for="activationThreshold"
-                >Masukkan aktivasi/nilai ambang:</label
-              >
-              <input
-                type="number"
-                id="activationThreshold"
-                class="form-control"
-                step="any"
-                placeholder="Contoh: 0.5"
-                required
-              />
-            </div>
-            <div class="form-group">
-              <label for="learningRate">Masukkan learning rate (a):</label>
-              <input
-                type="number"
-                id="learningRate"
-                class="form-control"
-                step="any"
-                placeholder="Contoh: 0.8"
-                required
-              />
-            </div>
-            <button
-              type="button"
-              class="btn btn-success mt-3"
-              onclick="startTraining()"
-            >
-              Mulai Pelatihan
-            </button>
-          </form>
-        </div>
-      </div>
-      <div class="col-md-9">
-        <div class="full-width-content">
-          <h1 class="mt-5">Proses Pelatihan Perceptron</h1>
-          <div class="table-responsive">
-            <table
-              id="trainingTable"
-              class="table table-dark table-bordered table-striped mt-3"
-            >
-              <thead>
-                <tr>
-                  <th rowspan="2">Data ke</th>
-                  <th colspan="3">Input</th>
-                  <th rowspan="2">Target</th>
-                  <th colspan="3">Bobot dan bias lama</th>
-                  <th rowspan="2">Y_in</th>
-                  <th rowspan="2">Y</th>
-                  <th rowspan="2">Cek kondisi (apakah Y=T?)</th>
-                  <th colspan="3">Perbaikan bobot</th>
-                  <th colspan="3">Bobot dan Bias baru</th>
-                </tr>
-                <tr>
-                  <th>x1</th>
-                  <th>x2</th>
-                  <th>b</th>
-                  <th>w1</th>
-                  <th>w2</th>
-                  <th>wb</th>
-                  <th>dw1</th>
-                  <th>dw2</th>
-                  <th>dwb</th>
-                  <th>w1</th>
-                  <th>w2</th>
-                  <th>wb</th>
-                </tr>
-              </thead>
-              <tbody id="tableBody">
-                <!-- Data akan ditambahkan melalui JavaScript -->
-              </tbody>
-            </table>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Perceptron Training Process</title>
+  <!-- Bootstrap CSS -->
+  <link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+  />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #343a40; /* Warna latar belakang tema dark */
+      color: #fff; /* Warna teks */
+    }
+    .form-container {
+      max-width: 600px;
+      margin-bottom: 20px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f9f9f9; /* Warna latar belakang form */
+      color: #333; /* Warna teks di form */
+      position: sticky;
+      top: 20px; /* Jarak dari atas */
+      z-index: 1000; /* Z-index untuk menempatkan di atas tabel */
+      margin-left: 15px; /* Spasi dari kiri */
+    }
+    .form-container label {
+      font-weight: bold;
+    }
+    .form-container input[type='number'],
+    .form-container input[type='text'] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+    .form-container button {
+      width: 100%;
+      background-color: #28a745; /* Warna tombol hijau */
+      color: #fff; /* Warna teks di tombol */
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .form-container button:hover {
+      background-color: #218838; /* Warna tombol hijau saat dihover */
+    }
+    .table-responsive {
+      margin-top: 30px;
+    }
+    /* Gaya tambahan untuk tampilan penuh lebar */
+    .full-width-content {
+      padding: 20px;
+    }
+    .full-width-background {
+      background-color: #454d55; /* Warna latar belakang tema dark lebih gelap */
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="row">
+    <!-- Spasi kosong kiri -->
+    <div class="col-md-3">
+      <div class="form-container">
+        <form id="perceptronForm">
+          <div class="form-group">
+            <label for="initialW1">Masukkan nilai awal W1:</label>
+            <input
+              type="number"
+              id="initialW1"
+              class="form-control"
+              step="any"
+              placeholder="Contoh: 0.0"
+              required
+            />
           </div>
+          <div class="form-group">
+            <label for="initialW2">Masukkan nilai awal W2:</label>
+            <input
+              type="number"
+              id="initialW2"
+              class="form-control"
+              step="any"
+              placeholder="Contoh: 0.0"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="initialWb">Masukkan nilai awal Wb:</label>
+            <input
+              type="number"
+              id="initialWb"
+              class="form-control"
+              step="any"
+              placeholder="Contoh: 0.0"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="activationThreshold"
+              >Masukkan aktivasi/nilai ambang:</label
+            >
+            <input
+              type="number"
+              id="activationThreshold"
+              class="form-control"
+              step="any"
+              placeholder="Contoh: 0.5"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="learningRate">Masukkan learning rate (a):</label>
+            <input
+              type="number"
+              id="learningRate"
+              class="form-control"
+              step="any"
+              placeholder="Contoh: 0.8"
+              required
+            />
+          </div>
+          <button
+            type="button"
+            class="btn btn-success mt-3"
+            onclick="startTraining()"
+          >
+            Mulai Pelatihan
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div class="full-width-content">
+        <h1 class="mt-5">Proses Pelatihan Perceptron</h1>
+        <div class="table-responsive">
+          <table
+            id="trainingTable"
+            class="table table-dark table-bordered table-striped mt-3"
+          >
+            <thead>
+              <tr>
+                <th rowspan="2">Data ke</th>
+                <th colspan="3">Input</th>
+                <th rowspan="2">Target</th>
+                <th colspan="3">Bobot dan bias lama</th>
+                <th rowspan="2">Y_in</th>
+                <th rowspan="2">Y</th>
+                <th rowspan="2">Cek kondisi (apakah Y=T?)</th>
+                <th colspan="3">Perbaikan bobot</th>
+                <th colspan="3">Bobot dan Bias baru</th>
+              </tr>
+              <tr>
+                <th>x1</th>
+                <th>x2</th>
+                <th>b</th>
+                <th>w1</th>
+                <th>w2</th>
+                <th>wb</th>
+                <th>dw1</th>
+                <th>dw2</th>
+                <th>dwb</th>
+                <th>w1</th>
+                <th>w2</th>
+                <th>wb</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- Data akan ditambahkan melalui JavaScript -->
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- Bootstrap JS -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <script>
-      // Fungsi threshold untuk output biner
-      function thresholdBinary(x) {
-        return x > 0 ? 1 : 0;
+  <script>
+    // Fungsi threshold untuk output biner
+    function thresholdBinary(x) {
+      return x > 0 ? 1 : 0;
+    }
+
+    // Fungsi forward propagation
+    function forwardPropagation(input, weight, bias) {
+      let net = bias;
+      for (let i = 0; i < input.length; ++i) {
+        net += input[i] * weight[i];
       }
+      return net;
+    }
 
-      // Fungsi forward propagation
-      function forwardPropagation(input, weight, bias) {
-        let net = bias;
+    // Fungsi untuk melatih perceptron
+    function trainPerceptron(
+      input,
+      weight,
+      target,
+      maxEpochs,
+      learning_rate,
+      bias,
+    ) {
+      let tableBody = document.getElementById('tableBody');
+      let html = '';
+
+      // Inisialisasi bobot dan bias
+      let initialWeight = [...weight];
+      let initialBias = bias;
+
+      // Iterasi untuk pelatihan
+      let epoch = 0;
+      while (epoch < maxEpochs) {
+        let total_error = 0.0;
+        html += `<tr><td colspan="17"><strong>Epoch ${
+          epoch + 1
+        }</strong></td></tr>`;
+        let allMatched = true; // Untuk mengecek apakah semua Y sama dengan target
         for (let i = 0; i < input.length; ++i) {
-          net += input[i] * weight[i];
+          let output, net;
+          net = forwardPropagation(input[i], weight, bias);
+          let activated_output = thresholdBinary(net);
+          let error = target[i] - activated_output;
+
+          // Pembaruan bobot dan bias
+          for (let j = 0; j < input[i].length; ++j) {
+            weight[j] += learning_rate * error * input[i][j];
+          }
+          bias += learning_rate * error;
+
+          // Tampilkan hasil dalam tabel
+          html += `<tr>`;
+          html += `<td>${i + 1}</td>`;
+          html += `<td>${input[i][0]}</td>`; // Kolom x1
+          html += `<td>${input[i][1]}</td>`; // Kolom x2
+          html += `<td>${bias.toFixed(2)}</td>`; // Kolom b
+          html += `<td>${target[i]}</td>`;
+          if (epoch === 0) {
+            html += `<td>0.00</td>`; // Kolom w1 lama
+            html += `<td>0.00</td>`; // Kolom w2 lama
+            html += `<td>0.00</td>`; // Kolom wb lama
+          } else {
+            html += `<td>${initialWeight[0].toFixed(2)}</td>`; // Kolom w1 lama
+            html += `<td>${initialWeight[1].toFixed(2)}</td>`; // Kolom w2 lama
+            html += `<td>${initialBias.toFixed(2)}</td>`; // Kolom wb lama
+          }
+          html += `<td>${net.toFixed(2)}</td>`; // Kolom Y_in
+          html += `<td>${activated_output}</td>`; // Kolom Y
+          html += `<td>${
+            activated_output === target[i] ? 'Ya' : 'Tidak'
+          }</td>`; // Kolom Cek kondisi (Y=T?)
+          html += `<td>${(learning_rate * error * input[i][0]).toFixed(
+            2,
+          )}</td>`; // Kolom dw1
+          html += `<td>${(learning_rate * error * input[i][1]).toFixed(
+            2,
+          )}</td>`; // Kolom dw2
+          html += `<td>${(learning_rate * error).toFixed(2)}</td>`; // Kolom dwb
+          html += `<td>${weight[0].toFixed(2)}</td>`; // Kolom w1 baru
+          html += `<td>${weight[1].toFixed(2)}</td>`; // Kolom w2 baru
+          html += `<td>${bias.toFixed(2)}</td>`; // Kolom wb baru
+          html += `</tr>`;
+
+          total_error += error * error;
+
+          // Periksa apakah semua Y sudah sama dengan target
+          if (activated_output !== target[i]) {
+            allMatched = false;
+          }
         }
-        return net;
+
+        // Jika total error adalah nol, berhenti pelatihan
+        if (allMatched) {
+          html += `<tr><td colspan="17">Karena semua nilai Y (data 1-${input.length}) sama dengan semua T (data 1-${input.length}), maka berhenti pelatihan.</td></tr>`;
+          break;
+        }
+
+        epoch++;
       }
 
-      // Fungsi untuk melatih perceptron
-      function trainPerceptron(
-        input,
-        weight,
-        target,
-        maxEpochs,
-        learning_rate,
-        bias,
+      // Jika mencapai maksimum epochs
+      if (epoch === maxEpochs) {
+        html += `<tr><td colspan="17">Mencapai maksimum iterasi (${maxEpochs}) tanpa konvergensi.</td></tr>`;
+      }
+
+      // Masukkan HTML ke dalam tabel
+      tableBody.innerHTML = html;
+    }
+
+    // Fungsi untuk memulai pelatihan
+    function startTraining() {
+      // Ambil nilai input dari form
+      let initialW1 = parseFloat(document.getElementById('initialW1').value);
+      let initialW2 = parseFloat(document.getElementById('initialW2').value);
+      let initialWb = parseFloat(document.getElementById('initialWb').value);
+      let activationThreshold = parseFloat(
+        document.getElementById('activationThreshold').value,
+      );
+      let learningRate = parseFloat(
+        document.getElementById('learningRate').value,
+      );
+
+      // Validasi input
+      if (
+        isNaN(initialW1) ||
+        isNaN(initialW2) ||
+        isNaN(initialWb) ||
+        isNaN(activationThreshold) ||
+        isNaN(learningRate)
       ) {
-        let tableBody = document.getElementById('tableBody');
-        let html = '';
-
-        // Inisialisasi bobot dan bias
-        let initialWeight = [...weight];
-        let initialBias = bias;
-
-        // Iterasi untuk pelatihan
-        let epoch = 0;
-        while (epoch < maxEpochs) {
-          let total_error = 0.0;
-          html += `<tr><td colspan="17"><strong>Epoch ${
-            epoch + 1
-          }</strong></td></tr>`;
-          let allMatched = true; // Untuk mengecek apakah semua Y sama dengan target
-          for (let i = 0; i < input.length; ++i) {
-            let output, net;
-            net = forwardPropagation(input[i], weight, bias);
-            let activated_output = thresholdBinary(net);
-            let error = target[i] - activated_output;
-
-            // Pembaruan bobot dan bias
-            for (let j = 0; j < input[i].length; ++j) {
-              weight[j] += learning_rate * error * input[i][j];
-            }
-            bias += learning_rate * error;
-
-            // Tampilkan hasil dalam tabel
-            html += `<tr>`;
-            html += `<td>${i + 1}</td>`;
-            html += `<td>${input[i][0]}</td>`; // Kolom x1
-            html += `<td>${input[i][1]}</td>`; // Kolom x2
-            html += `<td>${bias.toFixed(2)}</td>`; // Kolom b
-            html += `<td>${target[i]}</td>`;
-            if (epoch === 0) {
-              html += `<td>0.00</td>`; // Kolom w1 lama
-              html += `<td>0.00</td>`; // Kolom w2 lama
-              html += `<td>0.00</td>`; // Kolom wb lama
-            } else {
-              html += `<td>${initialWeight[0].toFixed(2)}</td>`; // Kolom w1 lama
-              html += `<td>${initialWeight[1].toFixed(2)}</td>`; // Kolom w2 lama
-              html += `<td>${initialBias.toFixed(2)}</td>`; // Kolom wb lama
-            }
-            html += `<td>${net.toFixed(2)}</td>`; // Kolom Y_in
-            html += `<td>${activated_output}</td>`; // Kolom Y
-            html += `<td>${
-              activated_output === target[i] ? 'Ya' : 'Tidak'
-            }</td>`; // Kolom Cek kondisi (Y=T?)
-            html += `<td>${(learning_rate * error * input[i][0]).toFixed(
-              2,
-            )}</td>`; // Kolom dw1
-            html += `<td>${(learning_rate * error * input[i][1]).toFixed(
-              2,
-            )}</td>`; // Kolom dw2
-            html += `<td>${(learning_rate * error).toFixed(2)}</td>`; // Kolom dwb
-            html += `<td>${weight[0].toFixed(2)}</td>`; // Kolom w1 baru
-            html += `<td>${weight[1].toFixed(2)}</td>`; // Kolom w2 baru
-            html += `<td>${bias.toFixed(2)}</td>`; // Kolom wb baru
-            html += `</tr>`;
-
-            total_error += error * error;
-
-            // Periksa apakah semua Y sudah sama dengan target
-            if (activated_output !== target[i]) {
-              allMatched = false;
-            }
-          }
-
-          // Jika total error adalah nol, berhenti pelatihan
-          if (allMatched) {
-            html += `<tr><td colspan="17">Karena semua nilai Y (data 1-${input.length}) sama dengan semua T (data 1-${input.length}), maka berhenti pelatihan.</td></tr>`;
-            break;
-          }
-
-          epoch++;
-        }
-
-        // Jika mencapai maksimum epochs
-        if (epoch === maxEpochs) {
-          html += `<tr><td colspan="17">Mencapai maksimum iterasi (${maxEpochs}) tanpa konvergensi.</td></tr>`;
-        }
-
-        // Masukkan HTML ke dalam tabel
-        tableBody.innerHTML = html;
+        alert('Harap masukkan nilai yang valid untuk semua input.');
+        return;
       }
 
-      // Fungsi untuk memulai pelatihan
-      function startTraining() {
-        // Ambil nilai input dari form
-        let initialW1 = parseFloat(document.getElementById('initialW1').value);
-        let initialW2 = parseFloat(document.getElementById('initialW2').value);
-        let initialWb = parseFloat(document.getElementById('initialWb').value);
-        let activationThreshold = parseFloat(
-          document.getElementById('activationThreshold').value,
-        );
-        let learningRate = parseFloat(
-          document.getElementById('learningRate').value,
-        );
+      // Input dan target untuk gerbang OR
+      let input = [
+        [0, 0],
+        [0, 1],
+        [1, 0],
+        [1, 1],
+      ];
+      let target = [0, 1, 1, 1];
 
-        // Validasi input
-        if (
-          isNaN(initialW1) ||
-          isNaN(initialW2) ||
-          isNaN(initialWb) ||
-          isNaN(activationThreshold) ||
-          isNaN(learningRate)
-        ) {
-          alert('Harap masukkan nilai yang valid untuk semua input.');
-          return;
-        }
+      // Bobot awal
+      let weight = [initialW1, initialW2];
+      let bias = initialWb;
 
-        // Input dan target untuk gerbang OR
-        let input = [
-          [0, 0],
-          [0, 1],
-          [1, 0],
-          [1, 1],
-        ];
-        let target = [0, 1, 1, 1];
-
-        // Bobot awal
-        let weight = [initialW1, initialW2];
-        let bias = initialWb;
-
-        // Panggil fungsi untuk melatih perceptron
-        trainPerceptron(input, weight, target, 1000, learningRate, bias);
-      }
-    </script>
-  </body>
+      // Panggil fungsi untuk melatih perceptron
+      trainPerceptron(input, weight, target, 1000, learningRate, bias);
+    }
+  </script>
+</body>
 </html>
+a
